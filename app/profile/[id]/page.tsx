@@ -1,3 +1,5 @@
+"use client"
+
 import PostUser from "@/app/components/profile/PostUser"
 import { ProfilePageTypes, User } from "@/app/types"
 import MainLayout from "@/app/layouts/MainLayout"
