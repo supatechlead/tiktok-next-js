@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Cropper } from 'react-advanced-cropper';
 import 'react-advanced-cropper/dist/style.css';
-import TextInput from "./TextInput";
+import TextInput from "../TextInput";
 import { BsPencil } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { useRouter } from "next/navigation";
