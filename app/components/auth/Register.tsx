@@ -1,15 +1,12 @@
-import { useGeneralStore } from "@/app/stores/general";
+
 import TextInput from "../TextInput";
 import { useState } from "react";
 import { ShowErrorObject } from "@/app/types";
-import { useUser } from "@/app/context/user";
 import { BiLoaderCircle } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
-    let { setIsLoginOpen } = useGeneralStore();
 
-    const contextUser = useUser()
     const router = useRouter()
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -26,33 +23,6 @@ export default function Register() {
         return ''
     }
 
-    const validate = () => {
-        setError(null)
-        let isError = false
-
-        const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-
-        if (!name) {
-            setError({ type: 'name', message: 'A Name is required'})
-            isError = true
-        } else if (!email) {
-            setError({ type: 'email', message: 'An Email is required'})
-            isError = true
-        } else if (!reg.test(email)) {
-            setError({ type: 'email', message: 'The Email is not valid'})
-            isError = true
-        } else if (!password) {
-            setError({ type: 'password', message: 'A Password is required'})
-            isError = true
-        } else if (password.length < 8) {
-            setError({ type: 'password', message: 'The Password needs to be longer'})
-            isError = true
-        } else if (password != confirmPassword) {
-            setError({ type: 'password', message: 'The Passwords do not match'})
-            isError = true
-        }
-        return isError
-    }
 
     const register = () => {
         console.log('Register')
