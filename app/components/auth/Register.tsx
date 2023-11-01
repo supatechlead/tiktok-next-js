@@ -1,12 +1,13 @@
-
+import { useGeneralStore } from "@/app/stores/general";
 import TextInput from "../TextInput";
 import { useState } from "react";
 import { ShowErrorObject } from "@/app/types";
+import { useUser } from "@/app/context/user";
 import { BiLoaderCircle } from "react-icons/bi";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/app/context/user";
 
 export default function Register() {
+    let { setIsLoginOpen } = useGeneralStore();
 
     const contextUser = useUser()
     const router = useRouter()
@@ -53,7 +54,6 @@ export default function Register() {
         return isError
     }
 
-
     const register = async () => {
         let isError = validate()
         if (isError) return
@@ -63,7 +63,7 @@ export default function Register() {
             setLoading(true)
             await contextUser.register(name, email, password)
             setLoading(false)
-            //setIsLoginOpen(false)
+            setIsLoginOpen(false)
             router.refresh()
         } catch (error) {
             console.log(error)
