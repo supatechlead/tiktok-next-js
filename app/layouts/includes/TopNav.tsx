@@ -1,19 +1,19 @@
 import Link from "next/link"
+import { debounce } from "debounce";
+import { useRouter, usePathname } from "next/navigation"
 import { BiSearch, BiUser } from "react-icons/bi"
+import { AiOutlinePlus } from "react-icons/ai"
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiLogOut } from "react-icons/fi"
-import { AiOutlinePlus } from "react-icons/ai"
-import { useRouter, usePathname } from "next/navigation"
-import { useGeneralStore } from "@/app/stores/general"
 import { useEffect, useState } from "react"
 import { useUser } from "@/app/context/user"
-import { RandomUsers } from "@/app/types"
+import { useGeneralStore } from "@/app/stores/general"
 import useCreateBucketUrl from "@/app/hooks/useCreateBucketUrl"
+import { RandomUsers } from "@/app/types"
+import useSearchProfilesByName from "@/app/hooks/useSearchProfilesByName";
 
-
-
-export default function TopNav() {   
-    const userContext= useUser()
+export default function TopNav() {    
+    const userContext = useUser()
     const router = useRouter()
     const pathname = usePathname()
 
@@ -23,9 +23,19 @@ export default function TopNav() {
 
     useEffect(() => { setIsEditProfileOpen(false) }, [])
 
-    const handleSearchName = (event: { target: { value: string } }) => {
-        console.log(event.target.value)
-    }
+    const handleSearchName = debounce(async (event: { target: { value: string } }) => {
+        if (event.target.value == "") return setSearchProfiles([])
+
+        try {
+            const result = await useSearchProfilesByName(event.target.value)
+            if (result) return setSearchProfiles(result)
+            setSearchProfiles([])
+        } catch (error) {
+            console.log(error)
+            setSearchProfiles([])
+            alert(error)
+        }
+    }, 500)
 
     const goTo = () => {
         if (!userContext?.user) return setIsLoginOpen(true)

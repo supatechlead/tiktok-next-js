@@ -9,34 +9,41 @@ import { BiChevronDown, BiChevronUp } from "react-icons/bi"
 import { useRouter } from "next/navigation"
 import ClientOnly from "@/app/components/ClientOnly"
 import { Post, PostPageTypes } from "@/app/types"
-
+import { usePostStore } from "@/app/stores/post"
+import { useLikeStore } from "@/app/stores/like"
+import { useCommentStore } from "@/app/stores/comment"
+import useCreateBucketUrl from "@/app/hooks/useCreateBucketUrl"
 
 export default function Post({ params }: PostPageTypes) {
 
-  
+    let { postById, postsByUser, setPostById, setPostsByUser } = usePostStore()
+    let { setLikesByPost } = useLikeStore()
+    let { setCommentsByPost } = useCommentStore()
+
     const router = useRouter()
 
-    const postById = {
-        id: '123',
-        user_id: '456',
-        video_url: '/beach.mp4',
-        text: 'this is some text',
-        created_at: 'data_here',
-        profile: {
-            user_id: '456',
-            name: 'user 1',
-            image: 'https://placehold.co/100'
-        }
-    }
+    useEffect(() => { 
+        setPostById(params.postId)
+        setCommentsByPost(params.postId) 
+        setLikesByPost(params.postId)
+        setPostsByUser(params.userId) 
+    }, [])
 
     const loopThroughPostsUp = () => {
-        console.log('loopThroughPostsUp')
+        postsByUser.forEach(post => {
+            if (post.id > params.postId) {
+                router.push(`/post/${post.id}/${params.userId}`)
+            }
+        });
     }
 
     const loopThroughPostsDown = () => {
-        console.log('loopThroughPostsDown')
+        postsByUser.forEach(post => {
+            if (post.id < params.postId) {
+                router.push(`/post/${post.id}/${params.userId}`)
+            }
+        });
     }
-
 
     return (
         <>
@@ -75,22 +82,22 @@ export default function Post({ params }: PostPageTypes) {
                     />
 
                     <ClientOnly>
-                        {true ? (
+                        {postById?.video_url ? (
                             <video 
                                 className="fixed object-cover w-full my-auto z-[0] h-screen" 
-                                src="/beach.mp4"
+                                src={useCreateBucketUrl(postById?.video_url)}
                             />
                         ) : null}
 
                         <div className="bg-black bg-opacity-70 lg:min-w-[480px] z-10 relative">
-                            {true ? (
+                            {postById?.video_url ? (
                                 <video 
                                     autoPlay
                                     controls
                                     loop
                                     muted
                                     className="h-screen mx-auto" 
-                                    src="/beach.mp4"
+                                    src={useCreateBucketUrl(postById.video_url)}
                                 />
                             ) : null}
                         </div>
@@ -102,7 +109,7 @@ export default function Post({ params }: PostPageTypes) {
                     <div className="py-7" />
 
                         <ClientOnly>
-                            {true ? (
+                            {postById ? (
                                 <CommentsHeader post={postById} params={params}/>
                             ) : null}
                         </ClientOnly>
